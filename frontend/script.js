@@ -111,7 +111,7 @@ document.getElementById("predictBtn").onclick = async () => {
   h3.style.marginTop = "1em";
   resultContainer.appendChild(h3);
 
-  // We will collect positive/negative features here
+  // Collect positive/negative features here
   const positiveFeatures = [];
   const negativeFeatures = [];
 
@@ -169,7 +169,7 @@ document.getElementById("predictBtn").onclick = async () => {
     }
   });
 
-  // 4) Build a short paragraph of full sentences summarizing “why”:
+  // 4) Paragraph:
   const summaryPara = document.createElement("p");
   summaryPara.style.marginTop = "1.5em";
   summaryPara.style.fontStyle = "italic";
