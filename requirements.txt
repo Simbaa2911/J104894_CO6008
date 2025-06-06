@@ -1,4 +1,3 @@
-rdkit-pypi
 biopython
 pandas
 scikit-learn
