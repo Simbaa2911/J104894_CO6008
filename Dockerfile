@@ -10,7 +10,7 @@ SHELL ["conda", "run", "-n", "dti-env", "/bin/bash", "-c"]
 # Install RDKit inside conda
 RUN conda install -c conda-forge rdkit -y
 
-# Install additional dependencies inside conda (important!)
+# Install additional dependencies inside conda
 COPY requirements.txt /app/requirements.txt
 WORKDIR /app
 RUN conda run -n dti-env pip install -r requirements.txt
@@ -23,5 +23,5 @@ COPY . /app
 ENV PORT=8000
 EXPOSE $PORT
 
-# Run the app
-CMD ["conda", "run", "-n", "dti-env", "uvicorn", "backend.app:app", "--host", "0.0.0.0", "--port", "$PORT"]
+# Start the app using a shell so that the PORT variable is interpolated properly
+CMD conda run -n dti-env bash -c "uvicorn backend.app:app --host 0.0.0.0 --port ${PORT:-8000}"
