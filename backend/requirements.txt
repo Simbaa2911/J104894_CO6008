@@ -1,0 +1,8 @@
+fastapi
+uvicorn[standard]
+pydantic
+numpy
+rdkit-pypi
+scikit-learn
+biopython
+shap
