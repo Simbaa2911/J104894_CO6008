@@ -4,7 +4,7 @@
 # # # cd frontend
 # # # python -m http.server 8080
 # # # http://localhost:8080/index.html
-# # # CC(=O)Oc1ccccc1C(=O)O
+# # # O=C1C(NC)(C2=CC=CC=C2Cl)CCCC1
 
 import numpy as np
 from collections import Counter
