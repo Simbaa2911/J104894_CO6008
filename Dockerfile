@@ -7,22 +7,20 @@ RUN conda create -n dti-env python=3.10 -y
 # Activate the environment
 SHELL ["conda", "run", "-n", "dti-env", "/bin/bash", "-c"]
 
-# Install RDKit via conda
+# Install RDKit inside conda
 RUN conda install -c conda-forge rdkit -y
 
-# Set the working directory
+# Install additional dependencies inside conda (important!)
+COPY requirements.txt /app/requirements.txt
 WORKDIR /app
+RUN conda run -n dti-env pip install -r requirements.txt
+RUN conda run -n dti-env pip install uvicorn  # install uvicorn inside conda
 
-# Copy the project files into the container
+# Copy the app code
 COPY . /app
 
-# Install Python dependencies from requirements.txt
-RUN pip install -r requirements.txt
-
-# Set the environment variable for the port
-ENV PORT=8000
-
 # Expose the port
+ENV PORT=8000
 EXPOSE $PORT
 
 # Run the app
