@@ -2,7 +2,7 @@ numpy<2
 fastapi
 biopython
 pandas
-scikit-learn
+scikit-learn==1.6.1
 tqdm
 shap
 uvicorn
