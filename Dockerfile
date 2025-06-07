@@ -21,13 +21,15 @@ RUN mkdir -p /drugbank_data && \
 # Frontend + Nginx + Uvicorn
 FROM python:3.10-slim AS final
 
-# Install Nginx
+# Install Nginx and system dependencies
 RUN apt-get update && \
     apt-get install -y nginx libxrender1 libxext6 libsm6 && \
     rm -rf /var/lib/apt/lists/*
 
-# Install uvicorn and rdkit
-RUN pip install uvicorn rdkit-pypi
+# Install Python dependencies
+COPY requirements.txt /app/requirements.txt
+RUN pip install --no-cache-dir -r /app/requirements.txt
+RUN pip install rdkit-pypi uvicorn
 
 # Set working directory
 WORKDIR /app
