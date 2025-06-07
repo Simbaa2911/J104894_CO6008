@@ -4,3 +4,4 @@ biopython
 pandas
 scikit-learn
 tqdm
+shap
