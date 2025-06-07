@@ -1,33 +1,41 @@
-# Use a Python image
-FROM python:3.10-slim
+# Stage 1: Backend build
+FROM python:3.10-slim AS backend
 
-# Install build dependencies and required libraries
+# Install dependencies
 RUN apt-get update && \
     apt-get install -y build-essential libxrender1 libxext6 libsm6 && \
     rm -rf /var/lib/apt/lists/*
 
-# Install RDKit via pip (no conda)
-RUN pip install rdkit-pypi
-
-# Install other dependencies
-COPY requirements.txt /app/requirements.txt
-RUN pip install --no-cache-dir -r /app/requirements.txt
-
-# Install uvicorn globally
-RUN pip install uvicorn
-
-# Set working directory
+# Working directory
 WORKDIR /app
 
-# Copy the entire project
+# Copy and install dependencies
+COPY requirements.txt /app/requirements.txt
+RUN pip install --no-cache-dir -r /app/requirements.txt
+RUN pip install rdkit-pypi uvicorn
+
+# Copy backend code
 COPY . /app
 
-#Copy drugbank_data folder
+# Copy drugbank_data folder
 RUN mkdir -p /drugbank_data && \
     cp -r /app/drugbank_data/* /drugbank_data/
 
-# Expose the port
-EXPOSE 8000
+# Stage 2: Frontend + Nginx
+FROM nginx:alpine
 
-# Run the app using uvicorn
-CMD ["uvicorn", "backend.app:app", "--host", "0.0.0.0", "--port", "8000"]
+# Copy frontend files
+COPY frontend /usr/share/nginx/html
+
+# Copy Nginx configuration
+COPY nginx.conf /etc/nginx/nginx.conf
+
+# Copy backend files from build stage
+COPY --from=backend /app /app
+COPY --from=backend /drugbank_data /drugbank_data
+
+# Expose ports
+EXPOSE 80
+
+# Start Uvicorn and Nginx together
+CMD sh -c "uvicorn backend.app:app --host 0.0.0.0 --port 8000 & nginx -g 'daemon off;'"
