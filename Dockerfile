@@ -1,4 +1,4 @@
-#Backend build
+# Backend build
 FROM python:3.10-slim AS backend
 
 # Install dependencies
@@ -18,7 +18,7 @@ COPY . /app
 RUN mkdir -p /drugbank_data && \
     cp -r /app/drugbank_data/* /drugbank_data/
 
-#Frontend + Nginx + Uvicorn
+# Frontend + Nginx + Uvicorn
 FROM python:3.10-slim AS final
 
 # Install Nginx
@@ -26,8 +26,11 @@ RUN apt-get update && \
     apt-get install -y nginx libxrender1 libxext6 libsm6 && \
     rm -rf /var/lib/apt/lists/*
 
-# Install uvicorn
+# Install uvicorn and rdkit
 RUN pip install uvicorn rdkit-pypi
+
+# Set working directory
+WORKDIR /app
 
 # Copy Nginx configuration
 COPY nginx.conf /etc/nginx/nginx.conf
