@@ -1,8 +1,8 @@
 # Use an official slim Python image
 FROM python:3.10-slim
 
-# Install build dependencies
-RUN apt-get update && apt-get install -y build-essential
+# Install build dependencies **and libxrender1**
+RUN apt-get update && apt-get install -y build-essential libxrender1
 
 # Install RDKit via pip (no conda)
 RUN pip install rdkit-pypi
