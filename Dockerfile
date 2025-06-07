@@ -44,8 +44,8 @@ COPY frontend /usr/share/nginx/html
 COPY --from=backend /app /app
 COPY --from=backend /drugbank_data /drugbank_data
 
-# Expose ports
+# Expose port 80 for HTTP traffic
 EXPOSE 80
 
-# Start Uvicorn and Nginx
+# Start Uvicorn and Nginx together
 CMD sh -c "uvicorn backend.app:app --host 0.0.0.0 --port 8000 & nginx -g 'daemon off;'"
