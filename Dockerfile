@@ -57,6 +57,6 @@ ENV PORT=8080
 # 1. render the template with the actual $PORT
 # 2. launch Uvicorn on the private port 8000
 # 3. start nginx in the foreground (keeps container alive)
-CMD sh -c 'envsubst "$$PORT" < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && \
+CMD sh -c 'envsubst < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && \
            uvicorn backend.app:app --host 0.0.0.0 --port 8000 & \
            nginx -g "daemon off;"'
