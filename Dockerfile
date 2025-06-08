@@ -13,10 +13,11 @@ COPY requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir -r /app/requirements.txt
 RUN pip install rdkit-pypi uvicorn
 
+# Copy entire source code including backend, drugbank_data, etc.
 COPY . /app
 
-RUN mkdir -p /drugbank_data && \
-    cp -r /app/drugbank_data/* /drugbank_data/
+# (Optional) Confirm directory structure (debugging only, can be removed)
+RUN ls -R /app
 
 # Frontend + Nginx + Uvicorn
 FROM python:3.10-slim AS final
@@ -42,9 +43,12 @@ COPY frontend /usr/share/nginx/html
 
 # Copy backend and data from build stage
 COPY --from=backend /app /app
-COPY --from=backend /drugbank_data /drugbank_data
 
-# Expose ports
+# **Place drugbank_data in /app/drugbank_data to match local relative imports**
+RUN mkdir -p /app/drugbank_data && \
+    cp -r /app/drugbank_data/* /app/drugbank_data/
+
+# Expose port 80
 EXPOSE 80
 
 # Start Uvicorn and Nginx
