@@ -50,7 +50,8 @@ ENV PORT=8080
 
 # ---------- start everything ----------
 
-CMD sh -c "envsubst '$PORT' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && \
+CMD sh -c "envsubst '\$PORT ${PORT}' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && \
            nginx -g 'daemon off;' & \
            sleep 1 && \
            uvicorn backend.app:app --host 127.0.0.1 --port 8000"
+
