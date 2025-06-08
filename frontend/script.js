@@ -1,4 +1,5 @@
-const API = "http://localhost:8000";
+// const API = "http://localhost:8000";
+const API = "";
 
 // 1) Load full (ID → Name) list into a scrollable table on page load
 async function loadTargetList() {
