@@ -4,5 +4,5 @@ biopython
 pandas
 scikit-learn==1.6.1
 tqdm
-shap
+shap==0.47.2
 uvicorn
