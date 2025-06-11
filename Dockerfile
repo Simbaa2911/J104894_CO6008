@@ -1,12 +1,12 @@
 ########################################
-# ---------- 1. build stage ---------- #
+# 1) build stage – install deps & copy code
 ########################################
 FROM python:3.10-slim AS backend
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 
-# OS libs rdkit needs to render SVGs
+# ─── OS libs RDKit needs for SVG drawing ──────────────────────────
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         build-essential libxrender1 libxext6 libsm6 && \
@@ -24,14 +24,14 @@ RUN mkdir -p /drugbank_data && cp -r drugbank_data/* /drugbank_data/
 
 
 ########################################
-# ---------- 2. runtime stage -------- #
+# 2) runtime stage – really small image
 ########################################
 FROM python:3.10-slim AS final
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 
-# Nginx + minimal X libs rdkit needs + envsubst
+# ─── Nginx + RDKit’s minimal X libs + envsubst ───────────────────
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         nginx libxrender1 libxext6 libsm6 gettext-base && \
@@ -39,7 +39,7 @@ RUN apt-get update && \
 
 WORKDIR /app
 
-# Python deps (wheel cache reused → quick)
+# Python wheels (wheel cache reused => fast)
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt \
     && pip install rdkit-pypi uvicorn
@@ -50,9 +50,11 @@ COPY --from=backend /drugbank_data /drugbank_data
 COPY frontend /usr/share/nginx/html
 COPY nginx.conf.template /etc/nginx/nginx.conf.template
 
-# start script
+# entrypoint script
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
 
-# ------- entry point -------
+# Expose the port Railway will map (good practice)
+EXPOSE 8080
+
 CMD ["/start.sh"]
