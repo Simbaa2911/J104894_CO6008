@@ -17,6 +17,7 @@ http {
         # ---------- static single-page app ----------
         location / {
             root /usr/share/nginx/html;
+            index index.html;
             try_files $uri $uri/ /index.html;
         }
         location ~* \.js$ {
