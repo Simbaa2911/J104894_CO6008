@@ -54,5 +54,5 @@ COPY nginx.conf.template /etc/nginx/nginx.conf.template
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
 
-# ------- entry point (one line, no quoting pain) -------
+# ------- entry point -------
 CMD ["/start.sh"]
