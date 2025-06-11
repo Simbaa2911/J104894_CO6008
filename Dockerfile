@@ -43,14 +43,14 @@ RUN pip install --no-cache-dir -r requirements.txt \
 COPY --from=backend /app /app
 COPY --from=backend /drugbank_data /drugbank_data
 COPY frontend /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/nginx.conf.template
+COPY nginx.conf.template /etc/nginx/nginx.conf.template
 
 # For local runs:  docker run -p 8080:8080 -e PORT=8080 …
 ENV PORT=8080
 
 # ---------- start everything ----------
-
-CMD ["sh","-c","envsubst '$$PORT' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;' & sleep 1 && uvicorn backend.app:app --host 127.0.0.1 --port 8000"]
-
+CMD ["sh","-c","envsubst '$$PORT' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf \
+ && uvicorn backend.app:app --host 127.0.0.1 --port 8000 & \
+ nginx -g 'daemon off;'"]
 
 
