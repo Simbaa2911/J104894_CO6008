@@ -1,6 +1,7 @@
 #!/usr/bin/env sh
 set -e
 
+export PORT="${PORT:-8080}"
 # 1) Render nginx.conf
 envsubst '$PORT' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf
 

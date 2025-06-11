@@ -7,7 +7,7 @@ http {
     upstream backend { server 127.0.0.1:8000; }
 
     server {
-        listen $PORT;
+        listen 0.0.0.0:${PORT};
 
         location /            { root /usr/share/nginx/html; try_files $uri $uri/ /index.html; }
         location ~* \.js$     { root /usr/share/nginx/html; add_header Content-Type application/javascript; }
