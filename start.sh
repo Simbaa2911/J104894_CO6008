@@ -3,7 +3,7 @@ set -e
 
 # 1 – Default to 80; honour Railway’s $PORT if it’s set manually
 export PORT="${PORT:-80}"
-echo "🚀  Container booting; PORT=$PORT"
+echo "Container booting; PORT=$PORT"
 
 # 2 – Render template
 envsubst '$PORT' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf
@@ -19,6 +19,6 @@ uvicorn backend.app:app \
        --access-log &        # shows each request
 
 # 5 – Foreground Nginx
-echo "🔎  Contents of /usr/share/nginx/html:"
+echo "Contents of /usr/share/nginx/html:"
 find /usr/share/nginx/html -maxdepth 2 -type f | sed 's/^/   /'
 exec nginx -g 'daemon off;'
