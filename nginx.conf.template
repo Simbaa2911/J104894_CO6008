@@ -12,24 +12,25 @@ http {
     server {
         listen 0.0.0.0:${PORT};
 
-        # ----- exact match "/"  →  index.html -----
+        # 1) EXACT match first  ──────────────────────────
         location = / {
             root  /usr/share/nginx/html;
             index index.html;
         }
 
-        # ----- SPA fallback for everything else -----
+        # 2) Generic static/SPA block next  ──────────────
         location / {
             root  /usr/share/nginx/html;
             try_files $uri /index.html =404;
         }
 
+        # 3) JS files (regex) AFTER the generic block
         location ~* \.js$ {
             root /usr/share/nginx/html;
             add_header Content-Type application/javascript;
         }
 
-        # ----- API -------------------------------
+        # 4) API proxied last  ───────────────────────────
         location /predict     { proxy_pass http://backend$request_uri; }
         location /targets     { proxy_pass http://backend$request_uri; }
         location /target-info { proxy_pass http://backend$request_uri; }
