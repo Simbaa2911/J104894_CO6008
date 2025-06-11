@@ -4,20 +4,17 @@ http {
     include       mime.types;
     default_type  application/octet-stream;
 
-    # Log directly to the container logs
     access_log /dev/stdout;
     error_log  /dev/stderr info;
 
-    # backend upstream
     upstream backend {
-        server 127.0.0.1:8000;
+        server 0.0.0.0:8000;       # <-- Uvicorn listens here
     }
 
     server {
-        # envsubst will inject $PORT (default 8080)
         listen 0.0.0.0:${PORT};
 
-        # ---------- static front-end ----------
+        # ---------- static single-page app ----------
         location / {
             root /usr/share/nginx/html;
             try_files $uri $uri/ /index.html;

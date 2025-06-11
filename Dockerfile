@@ -1,60 +1,50 @@
 ########################################
-# 1) build stage – install deps & copy code
+# 1 – build stage
 ########################################
 FROM python:3.10-slim AS backend
 
-ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
 
-# ─── OS libs RDKit needs for SVG drawing ──────────────────────────
+# System libs RDKit needs for 2-D SVGs
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         build-essential libxrender1 libxext6 libsm6 && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
-
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt \
-    && pip install rdkit-pypi uvicorn
+    && pip install rdkit-pypi uvicorn          # rdkit wheel brings Pillow
 
-# project code + pre-computed data
+# Code + data
 COPY . .
-RUN mkdir -p /drugbank_data && cp -r drugbank_data/* /drugbank_data/
+RUN mkdir -p /drugbank_data && cp -r drugbank_data/* /drugbank_data
 
 
 ########################################
-# 2) runtime stage – really small image
+# 2 – runtime stage
 ########################################
 FROM python:3.10-slim AS final
 
-ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
 
-# ─── Nginx + RDKit’s minimal X libs + envsubst ───────────────────
+# Tiny Nginx layer + envsubst + the same X libs
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         nginx libxrender1 libxext6 libsm6 gettext-base && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
-
-# Python wheels (wheel cache reused => fast)
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt \
     && pip install rdkit-pypi uvicorn
 
-# code, data, frontend bundle
 COPY --from=backend /app /app
 COPY --from=backend /drugbank_data /drugbank_data
 COPY frontend /usr/share/nginx/html
 COPY nginx.conf.template /etc/nginx/nginx.conf.template
-
-# entrypoint script
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
 
-# Expose the port Railway will map (good practice)
-EXPOSE 8080
-
+EXPOSE 80          # Railway’s default health-check target
 CMD ["/start.sh"]

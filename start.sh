@@ -1,21 +1,22 @@
 #!/usr/bin/env sh
 set -e
 
-# 1) Railway doesn’t pre-define PORT for Docker images.
-export PORT="${PORT:-8080}"
-echo "👋 Running with PORT=$PORT"
+# 1 – Default to 80; honour Railway’s $PORT if it’s set manually
+export PORT="${PORT:-80}"
+echo "🚀  Container booting; PORT=$PORT"
 
-# 2) Render Nginx template
+# 2 – Render template
 envsubst '$PORT' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf
 
-# 3) Sanity-check Nginx config (prints helpful errors then exits 0/1)
+# 3 – Config sanity-check (prints error + exits 1 if bad)
 nginx -t
 
-# 4) Start Uvicorn in background
+# 4 – Start Uvicorn (bind on all interfaces!)
 uvicorn backend.app:app \
-       --host 127.0.0.1 \
+       --host 0.0.0.0 \
        --port 8000 \
-       --log-level debug &
+       --log-level debug \
+       --access-log &        # shows each request
 
-# 5) Start Nginx in foreground
+# 5 – Foreground Nginx (so the container stays alive)
 exec nginx -g 'daemon off;'
