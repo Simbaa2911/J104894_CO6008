@@ -19,4 +19,6 @@ uvicorn backend.app:app \
        --access-log &        # shows each request
 
 # 5 – Foreground Nginx
+echo "🔎  Contents of /usr/share/nginx/html:"
+find /usr/share/nginx/html -maxdepth 2 -type f | sed 's/^/   /'
 exec nginx -g 'daemon off;'
