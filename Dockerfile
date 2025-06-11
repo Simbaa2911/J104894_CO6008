@@ -45,9 +45,6 @@ COPY --from=backend /drugbank_data /drugbank_data
 COPY frontend /usr/share/nginx/html
 COPY nginx.conf.template /etc/nginx/nginx.conf.template
 
-# For local runs:  docker run -p 8080:8080 -e PORT=8080 …
-ENV PORT=8080
 
 # ---------- start everything ----------
-#CMD ["sh","-c","envsubst '$PORT' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && uvicorn backend.app:app --host 127.0.0.1 --port 8000 & nginx -g 'daemon off;'"]
-CMD ["sh","-c","set -e; envsubst '$PORT' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf; echo '----- generated nginx.conf -----'; cat /etc/nginx/nginx.conf; echo '--------------------------------'; echo 'Running: nginx -t'; nginx -t; echo 'Config OK, starting services…'; uvicorn backend.app:app --host 127.0.0.1 --port 8000 & nginx -g 'daemon off;'"]
+CMD ["sh","-c","envsubst '$PORT' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && uvicorn backend.app:app --host 127.0.0.1 --port 8000 & nginx -g 'daemon off;'"]
