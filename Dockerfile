@@ -45,6 +45,5 @@ COPY --from=backend /drugbank_data /drugbank_data
 COPY frontend /usr/share/nginx/html
 COPY nginx.conf.template /etc/nginx/nginx.conf.template
 
-
-# ---------- start everything ----------
+# ------------- Start --------------
 CMD ["sh","-c","envsubst '$PORT' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf && uvicorn backend.app:app --host 127.0.0.1 --port 8000 & nginx -g 'daemon off;'"]
