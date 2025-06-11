@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 set -e
 
-export PORT="${PORT:-8080}"
+export PORT="${PORT:-80}"
 echo "PORT inside container = $PORT"
 
 # render template
