@@ -18,5 +18,5 @@ uvicorn backend.app:app \
        --log-level debug \
        --access-log &        # shows each request
 
-# 5 – Foreground Nginx (so the container stays alive)
+# 5 – Foreground Nginx
 exec nginx -g 'daemon off;'
