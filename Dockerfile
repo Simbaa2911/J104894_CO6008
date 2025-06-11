@@ -35,6 +35,8 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 RUN rm -f /etc/nginx/conf.d/*
+RUN rm -rf /etc/nginx/*conf.d /etc/nginx/sites-enabled
+
 
 WORKDIR /app
 COPY requirements.txt .
