@@ -42,6 +42,7 @@ RUN pip install --no-cache-dir -r requirements.txt \
 COPY --from=backend /app /app
 COPY --from=backend /drugbank_data /drugbank_data
 COPY frontend/. /usr/share/nginx/html/
+COPY frontend/index.html /usr/share/nginx/html/index.html
 COPY nginx.conf.template /etc/nginx/nginx.conf.template
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
