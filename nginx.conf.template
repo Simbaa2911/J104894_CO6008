@@ -14,10 +14,12 @@ http {
         listen 0.0.0.0:${PORT} default_server;   # <─ make this the default
 
         # 1) EXACT match – stop processing right here
-        location = / {
+        location = / { return 302 /index.html; }
+        location = /index.html {
             root /usr/share/nginx/html;
-            try_files /index.html =404;         # serve the SPA entry point
+            try_files $uri =404;
         }
+
 
         # 2) Anything else that is not .js  ➜  fallback to index.html
         location / {
