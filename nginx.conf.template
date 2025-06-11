@@ -13,11 +13,16 @@ http {
         listen 0.0.0.0:${PORT};
 
         # ---------- static SPA ----------
+        #
+        # 1) ‘index index.html;’ tells Nginx to use the file when the
+        #    URI is exactly “/”.
+        # 2) ‘=404’ at the end of try_files means:
+        #      if *none* of the paths exist, return 404 RIGHT HERE
+        #      (do not fall through to the proxy.)
+        #
         location / {
             root   /usr/share/nginx/html;
-            index  index.html;            # serve it when path == "/"
-            # (=404 stops any further internal redirect, so the request
-            #  will not reach FastAPI if /index.html exists)
+            index  index.html;
             try_files $uri $uri/ /index.html =404;
         }
 

@@ -45,11 +45,11 @@ RUN pip install --no-cache-dir -r requirements.txt \
 COPY --from=backend /app /app
 COPY --from=backend /drugbank_data /drugbank_data
 
-# ① copy the entire front-end bundle
+# copy the entire front-end bundle
 COPY frontend/. /usr/share/nginx/html/
 
-# ② guarantee the launch page sits at the web-root
-#    (over-writes anything the previous COPY might have placed there)
+# guarantee the launch page sits at the web-root
+# (over-writes anything the previous COPY might have placed there)
 COPY frontend/index.html /usr/share/nginx/html/index.html
 
 # Nginx config + entrypoint
