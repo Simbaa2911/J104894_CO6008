@@ -7,18 +7,16 @@ http {
     access_log /dev/stdout;
     error_log  /dev/stderr info;
 
-    upstream backend {
-        server 0.0.0.0:8000;       # <-- Uvicorn listens here
-    }
+    upstream backend { server 0.0.0.0:8000; }
 
     server {
         listen 0.0.0.0:${PORT};
 
-        # ---------- static single-page app ----------
+        # ---------- static SPA ----------
         location / {
-            root /usr/share/nginx/html;
-            index index.html;
-            try_files $uri $uri/ /index.html;
+            root   /usr/share/nginx/html;
+            index  index.html;            # serve it for bare “/”
+            try_files $uri /index.html;   # SPA fallback
         }
         location ~* \.js$ {
             root /usr/share/nginx/html;

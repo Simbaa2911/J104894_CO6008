@@ -1,24 +1,25 @@
 #!/usr/bin/env sh
 set -e
 
-# 1 – Default to 80; honour Railway’s $PORT if it’s set manually
+# Railway sets no PORT for Docker images; default to 80
 export PORT="${PORT:-80}"
-echo "Container booting; PORT=$PORT"
+echo "▶︎ Booting container — PORT=$PORT"
 
-# 2 – Render template
+# Render nginx.conf with the actual port
 envsubst '$PORT' < /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf
 
-# 3 – Config sanity-check (prints error + exits 1 if bad)
+# Sanity-check config
 nginx -t
 
-# 4 – Start Uvicorn (bind on all interfaces!)
+# Start FastAPI (Uvicorn) in the background
 uvicorn backend.app:app \
        --host 0.0.0.0 \
        --port 8000 \
-       --log-level debug \
-       --access-log &        # shows each request
+       --log-level info &
 
-# 5 – Foreground Nginx
-echo "Contents of /usr/share/nginx/html:"
-find /usr/share/nginx/html -maxdepth 2 -type f | sed 's/^/   /'
+# Show what reached the image (helps future debug)
+echo "── /usr/share/nginx/html contains:"
+find /usr/share/nginx/html -maxdepth 2 -name 'index.html' -print | sed 's/^/   /'
+
+# Foreground Nginx
 exec nginx -g 'daemon off;'
