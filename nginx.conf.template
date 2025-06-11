@@ -15,7 +15,9 @@ http {
         # ---------- static SPA ----------
         location / {
             root   /usr/share/nginx/html;
-            index  index.html;
+            index  index.html;            # serve it when path == "/"
+            # (=404 stops any further internal redirect, so the request
+            #  will not reach FastAPI if /index.html exists)
             try_files $uri $uri/ /index.html =404;
         }
 
