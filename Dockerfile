@@ -46,5 +46,6 @@ COPY nginx.conf.template /etc/nginx/nginx.conf.template
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
 
-EXPOSE 80          # Railway’s default health-check target
+EXPOSE 80
+# Railway’s default health-check target
 CMD ["/start.sh"]
