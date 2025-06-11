@@ -34,6 +34,8 @@ RUN apt-get update && \
         nginx libxrender1 libxext6 libsm6 gettext-base && \
     rm -rf /var/lib/apt/lists/*
 
+RUN rm -f /etc/nginx/conf.d/*
+
 WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt \

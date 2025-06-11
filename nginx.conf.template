@@ -4,33 +4,34 @@ http {
     include       mime.types;
     default_type  application/octet-stream;
 
+    # Log to the container logs
     access_log /dev/stdout;
     error_log  /dev/stderr info;
 
     upstream backend { server 0.0.0.0:8000; }
 
     server {
-        listen 0.0.0.0:${PORT};
+        listen 0.0.0.0:${PORT} default_server;   # <─ make this the default
 
-        # 1) EXACT match first  ──────────────────────────
+        # 1) EXACT match – stop processing right here
         location = / {
-            root  /usr/share/nginx/html;
-            index index.html;
+            root /usr/share/nginx/html;
+            try_files /index.html =404;         # serve the SPA entry point
         }
 
-        # 2) Generic static/SPA block next  ──────────────
+        # 2) Anything else that is not .js  ➜  fallback to index.html
         location / {
-            root  /usr/share/nginx/html;
+            root /usr/share/nginx/html;
             try_files $uri /index.html =404;
         }
 
-        # 3) JS files (regex) AFTER the generic block
+        # 3) Static JavaScript
         location ~* \.js$ {
             root /usr/share/nginx/html;
             add_header Content-Type application/javascript;
         }
 
-        # 4) API proxied last  ───────────────────────────
+        # 4) API proxy
         location /predict     { proxy_pass http://backend$request_uri; }
         location /targets     { proxy_pass http://backend$request_uri; }
         location /target-info { proxy_pass http://backend$request_uri; }
