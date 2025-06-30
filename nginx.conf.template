@@ -1,39 +1,32 @@
-events {}
+worker_processes  1;
+
+events { worker_connections 1024; }
 
 http {
     include       mime.types;
     default_type  application/octet-stream;
 
-    # Log to the container logs
-    access_log /dev/stdout;
-    error_log  /dev/stderr info;
+    access_log  /dev/stdout;
+    error_log   /dev/stderr info;
 
-    upstream backend { server 0.0.0.0:8000; }
+    upstream backend { server 127.0.0.1:8000; }
 
     server {
-        listen 0.0.0.0:${PORT} default_server;   # <─ make this the default
+        listen 80 default_server;
 
-        # 1) EXACT match – stop processing right here
-        location = / { return 302 /index.html; }
-        location = /index.html {
+        # 1) “/”  – serve SPA entry page
+        location = / {
             root /usr/share/nginx/html;
-            try_files $uri =404;
+            try_files /index.html =404;
         }
 
-
-        # 2) Anything else that is not .js  ➜  fallback to index.html
+        # 2) everything else that lives in frontend/
         location / {
             root /usr/share/nginx/html;
-            try_files $uri /index.html =404;
+            try_files $uri $uri/ =404;
         }
 
-        # 3) Static JavaScript
-        location ~* \.js$ {
-            root /usr/share/nginx/html;
-            add_header Content-Type application/javascript;
-        }
-
-        # 4) API proxy
+        # 3) Proxy API routes
         location /predict     { proxy_pass http://backend$request_uri; }
         location /targets     { proxy_pass http://backend$request_uri; }
         location /target-info { proxy_pass http://backend$request_uri; }
