@@ -11,6 +11,9 @@ from rdkit.DataStructs import ConvertToNumpyArray
 from rdkit.Chem.Draw import rdMolDraw2D
 from Bio import SeqIO
 import shap
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
+import os
 
 app = FastAPI(title="DTI Predictor API")
 app.add_middleware(
@@ -331,3 +334,10 @@ def predict(query: Query):
         raise HTTPException(status_code=400, detail=str(ve))
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+# Serve JS file and other static assets
+app.mount("/static", StaticFiles(directory="frontend"), name="static")
+
+@app.get("/")
+def read_index():
+    return FileResponse("frontend/index.html")
