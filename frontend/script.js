@@ -1,10 +1,10 @@
-const API = "https://j104894-co6008.onrender.com/";
-//const API = "http://localhost:8000";
+//const API = "https://j104894-co6008.onrender.com/";
+const API = "http://localhost:8000";
 
 // 1) Load full (ID → Name) list into a scrollable table on page load
 async function loadTargetList() {
   try {
-    const res = await fetch(`${API}/targets`);
+    const res = await fetch(`${API}/target-info`);
     if (!res.ok) {
       const errBody = await res.json();
       throw new Error(errBody.detail || "Failed to load target info");
